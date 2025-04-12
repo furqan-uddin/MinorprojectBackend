@@ -20,6 +20,7 @@ app.use(express.json()); // To parse JSON request bodies
 
 app.use('/api/auth', authRoutes)
 app.use('/api/user', userRoutes);
+app.use('/api/quizzes', quizRoutes);
 
 
 // Routes (placeholder for now)
