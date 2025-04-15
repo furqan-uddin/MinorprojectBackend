@@ -1,34 +1,48 @@
 import Result from '../models/Result.js';
 
+// Submit a new result
 export const submitResult = async (req, res) => {
-  try {
-    const { user, quiz, score, totalQuestions, correctAnswers, answers } = req.body;
+  const { quizTitle, score, totalQuestions } = req.body;
 
-    const newResult = new Result({
-      user,
-      quiz,
+  if (!quizTitle || score === undefined || totalQuestions === undefined) {
+    return res.status(400).json({ message: 'Missing fields' });
+  }
+
+  try {
+    const result = new Result({
+      user: req.user._id,
+      quizTitle,
       score,
       totalQuestions,
-      correctAnswers,
-      answers,
     });
 
-    const savedResult = await newResult.save();
-    res.status(201).json(savedResult);
-  } catch (error) {
-    res.status(500).json({ message: 'Error saving result', error });
+    await result.save();
+    res.status(201).json({ message: 'Result saved', result });
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to submit result' });
   }
 };
 
-export const getResultsByUser = async (req, res) => {
+// Get leaderboard (top scores)
+export const getLeaderboard = async (req, res) => {
   try {
-    const userId = req.params.userId;
-    const results = await Result.find({ user: userId })
-      .populate('quiz', 'title category')
-      .sort({ createdAt: -1 });
+    const topResults = await Result.find()
+      .sort({ score: -1 })
+      .limit(10)
+      .populate('user', 'name email');
 
-    res.json(results);
-  } catch (error) {
-    res.status(500).json({ message: 'Error fetching results', error });
+    res.status(200).json(topResults);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch leaderboard' });
+  }
+};
+
+// Get results of logged-in user
+export const getUserResults = async (req, res) => {
+  try {
+    const userResults = await Result.find({ user: req.user._id });
+    res.status(200).json(userResults);
+  } catch (err) {
+    res.status(500).json({ message: 'Failed to fetch user results' });
   }
 };

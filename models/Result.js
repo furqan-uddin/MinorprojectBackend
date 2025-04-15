@@ -1,43 +1,27 @@
 import mongoose from 'mongoose';
 
-const resultSchema = new mongoose.Schema(
-  {
-    user: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'User',
-      required: true,
-    },
-    quiz: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: 'Quiz',
-      required: true,
-    },
-    score: {
-      type: Number,
-      required: true,
-    },
-    totalQuestions: {
-      type: Number,
-      required: true,
-    },
-    correctAnswers: {
-      type: Number,
-      required: true,
-    },
-    answers: [
-      {
-        questionId: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: 'Question',
-        },
-        selectedOption: String,
-        isCorrect: Boolean,
-      },
-    ],
+const resultSchema = new mongoose.Schema({
+  user: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'User',
+    required: true,
   },
-  { timestamps: true }
-);
+  quizTitle: {
+    type: String,
+    required: true,
+  },
+  score: {
+    type: Number,
+    required: true,
+  },
+  totalQuestions: {
+    type: Number,
+    required: true,
+  },
+  date: {
+    type: Date,
+    default: Date.now,
+  },
+});
 
-const Result = mongoose.model('Result', resultSchema);
-
-export default Result;
+export default mongoose.model('Result', resultSchema);

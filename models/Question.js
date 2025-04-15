@@ -1,3 +1,4 @@
+// models/Question.js
 import mongoose from 'mongoose';
 
 const questionSchema = new mongoose.Schema({
@@ -5,15 +6,16 @@ const questionSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  options: {
-    type: [String], // Array of options
+  options: [
+    {
+      type: String,
+      required: true,
+    },
+  ],
+  correctAnswerIndex: {
+    type: Number,
     required: true,
   },
-  correctAnswer: {
-    type: String,
-    required: true,
-  },
-}, { timestamps: true });
+});
 
-const Question = mongoose.model('Question', questionSchema);
-export default Question;
+export default mongoose.model('Question', questionSchema);

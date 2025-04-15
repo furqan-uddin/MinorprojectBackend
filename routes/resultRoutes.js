@@ -1,12 +1,15 @@
 import express from 'express';
-import { submitResult, getResultsByUser } from '../controllers/resultController.js';
+import { protect } from '../middleware/authMiddleware.js';
+import {
+  submitResult,
+  getLeaderboard,
+  getUserResults,
+} from '../controllers/resultController.js';
 
 const router = express.Router();
 
-// POST: Save a new result
-router.post('/', submitResult);
-
-// GET: Fetch results by user
-router.get('/:userId', getResultsByUser);
+router.post('/', protect, submitResult);         // Submit result
+router.get('/leaderboard', getLeaderboard);      // Public leaderboard
+router.get('/my-results', protect, getUserResults); // Private user results
 
 export default router;

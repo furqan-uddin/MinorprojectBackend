@@ -1,3 +1,4 @@
+// models/Quiz.js
 import mongoose from 'mongoose';
 
 const quizSchema = new mongoose.Schema({
@@ -5,8 +6,8 @@ const quizSchema = new mongoose.Schema({
     type: String,
     required: true,
   },
-  category: {
-    type: String,
+  categoryId: {
+    type: String, // could be category name or ID
     required: true,
   },
   questions: [
@@ -15,7 +16,8 @@ const quizSchema = new mongoose.Schema({
       ref: 'Question',
     },
   ],
-}, { timestamps: true });
+}, {
+  timestamps: true,
+});
 
-const Quiz = mongoose.model('Quiz', quizSchema);
-export default Quiz;
+export default mongoose.model('Quiz', quizSchema);
