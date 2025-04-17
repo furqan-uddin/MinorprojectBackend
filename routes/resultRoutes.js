@@ -1,15 +1,11 @@
+// routes/resultRoutes.js
 import express from 'express';
-import { protect } from '../middleware/authMiddleware.js';
-import {
-  submitResult,
-  getLeaderboard,
-  getUserResults,
-} from '../controllers/resultController.js';
+import { submitQuizResult, getLeaderboard } from '../controllers/resultController.js';
+import protect from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-router.post('/', protect, submitResult);         // Submit result
-router.get('/leaderboard', getLeaderboard);      // Public leaderboard
-router.get('/my-results', protect, getUserResults); // Private user results
+router.post('/', protect, submitQuizResult);
+router.get('/leaderboard', getLeaderboard); // can be public
 
 export default router;

@@ -1,12 +1,20 @@
 // routes/quizRoutes.js
 import express from 'express';
-import { getAllQuizzes, getQuizByCategoryId } from '../controllers/quizController.js';
-import { protect } from '../middleware/authMiddleware.js';
+import {
+  getAllCategories,
+  getQuestionsByCategory,
+  addQuizCategory,
+  addQuestion,
+} from '../controllers/quizController.js';
+import protect from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
-// Protected Routes
-router.get('/', protect, getAllQuizzes);
-router.get('/:categoryId', protect, getQuizByCategoryId);
+router.get('/', protect, getAllCategories);
+router.get('/:categoryId', protect, getQuestionsByCategory);
+// router.get('/:category', getQuestionsByCategory);
+router.post('/', protect, addQuizCategory);
+router.post('/add-question', protect, addQuestion); // New route to add a question
 
 export default router;
+

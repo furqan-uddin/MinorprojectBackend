@@ -1,48 +1,40 @@
+// controllers/resultController.js
 import Result from '../models/Result.js';
+import User from '../models/User.js';
 
-// Submit a new result
-export const submitResult = async (req, res) => {
-  const { quizTitle, score, totalQuestions } = req.body;
-
-  if (!quizTitle || score === undefined || totalQuestions === undefined) {
-    return res.status(400).json({ message: 'Missing fields' });
-  }
+export const submitQuizResult = async (req, res) => {
+  const { category, score, total } = req.body;
 
   try {
-    const result = new Result({
+    const result = await Result.create({
       user: req.user._id,
-      quizTitle,
+      category,
       score,
-      totalQuestions,
+      total,
     });
 
-    await result.save();
-    res.status(201).json({ message: 'Result saved', result });
-  } catch (err) {
+    res.status(201).json(result);
+  } catch (error) {
     res.status(500).json({ message: 'Failed to submit result' });
   }
 };
 
-// Get leaderboard (top scores)
 export const getLeaderboard = async (req, res) => {
   try {
     const topResults = await Result.find()
+      .populate('user', 'name email')
       .sort({ score: -1 })
-      .limit(10)
-      .populate('user', 'name email');
+      .limit(10);
 
-    res.status(200).json(topResults);
-  } catch (err) {
+    const leaderboard = topResults.map((r) => ({
+      name: r.user.name,
+      category: r.category,
+      score: r.score,
+      total: r.total,
+    }));
+
+    res.json(leaderboard);
+  } catch (error) {
     res.status(500).json({ message: 'Failed to fetch leaderboard' });
-  }
-};
-
-// Get results of logged-in user
-export const getUserResults = async (req, res) => {
-  try {
-    const userResults = await Result.find({ user: req.user._id });
-    res.status(200).json(userResults);
-  } catch (err) {
-    res.status(500).json({ message: 'Failed to fetch user results' });
   }
 };

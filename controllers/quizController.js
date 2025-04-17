@@ -2,25 +2,66 @@
 import Quiz from '../models/Quiz.js';
 import Question from '../models/Question.js';
 
-// GET all quiz categories (without questions)
-export const getAllQuizzes = async (req, res) => {
+export const getAllCategories = async (req, res) => {
   try {
-    const quizzes = await Quiz.find().select('title categoryId');
-    res.status(200).json(quizzes);
-  } catch (err) {
-    res.status(500).json({ message: 'Failed to fetch quizzes' });
+    const categories = await Quiz.find();
+    res.json(categories);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch categories' });
   }
 };
 
-// GET quiz with questions by categoryId
-export const getQuizByCategoryId = async (req, res) => {
-  const { categoryId } = req.params;
+// GET /api/quizzes/:category
+export const getQuestionsByCategory = async (req, res) => {
   try {
-    const quiz = await Quiz.findOne({ categoryId }).populate('questions');
-    if (!quiz) return res.status(404).json({ message: 'Quiz not found' });
+    const { categoryId } = req.params;
+    const { difficulty } = req.query;
 
-    res.status(200).json(quiz);
-  } catch (err) {
-    res.status(500).json({ message: 'Failed to fetch quiz' });
+    console.log("➡️ Received categoryId:", categoryId);
+    console.log("➡️ Received difficulty:", difficulty);
+
+    const match = { category: categoryId };
+    if (difficulty) match.difficulty = difficulty;
+
+    console.log("🔍 MongoDB match query:", match);
+
+    const questions = await Question.aggregate([
+      { $match: match },
+      { $sample: { size: 10 } }
+    ]);
+
+    console.log("✅ Questions found:", questions.length);
+    res.json(questions);
+
+  } catch (error) {
+    console.error("❌ Error fetching questions:", error);
+    res.status(500).json({
+      message: "Failed to load questions",
+      error: error.message || "Unknown server error"
+    });
+  }
+};
+
+
+
+
+
+export const addQuizCategory = async (req, res) => {
+  try {
+    const { category, description } = req.body;
+    const quiz = await Quiz.create({ category, description });
+    res.status(201).json(quiz);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to create quiz category' });
+  }
+};
+
+// Optional: add question
+export const addQuestion = async (req, res) => {
+  try {
+    const newQ = await Question.create(req.body);
+    res.status(201).json(newQ);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to add question' });
   }
 };

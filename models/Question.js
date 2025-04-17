@@ -2,20 +2,16 @@
 import mongoose from 'mongoose';
 
 const questionSchema = new mongoose.Schema({
-  questionText: {
+  category: { type: String, required: true },
+  question: { type: String, required: true },
+  options: { type: [String], required: true },
+  answer: { type: String, required: true },
+  difficulty: {
     type: String,
-    required: true,
-  },
-  options: [
-    {
-      type: String,
-      required: true,
-    },
-  ],
-  correctAnswerIndex: {
-    type: Number,
-    required: true,
+    enum: ['easy', 'medium', 'hard'],
+    default: 'medium',
   },
 });
 
-export default mongoose.model('Question', questionSchema);
+const Question = mongoose.model('Question', questionSchema);
+export default Question;

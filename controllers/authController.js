@@ -1,56 +1,57 @@
 // controllers/authController.js
 import User from '../models/User.js';
+import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 
-const generateToken = (user) => {
-  return jwt.sign(
-    { _id: user._id, email: user.email, role: user.role },
-    process.env.JWT_SECRET,
-    { expiresIn: '7d' }
-  );
-};
-
-export const register = async (req, res) => {
+export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
-
+  console.log("Register Payload:", req.body); 
   try {
-    const existUser = await User.findOne({ email });
-    if (existUser) return res.status(400).json({ message: 'Email already exists' });
+    const userExists = await User.findOne({ email });
+    if (userExists)
+      return res.status(400).json({ message: 'User already exists' });
 
-    const user = await User.create({ name, email, password });
-    const token = generateToken(user);
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    const newUser = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
 
     res.status(201).json({
-      _id: user._id,
-      name: user.name,
-      email: user.email,
-      role: user.role,
-      token,
+      _id: newUser._id,
+      name: newUser.name,
+      email: newUser.email,
+      token: generateToken(newUser._id),
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error during registration' });
+    res.status(500).json({ message: 'Server error' });
   }
 };
 
-export const login = async (req, res) => {
+export const loginUser = async (req, res) => {
   const { email, password } = req.body;
-
+  console.log("Login Payload:", req.body);
   try {
     const user = await User.findOne({ email });
-    if (!user || !(await user.matchPassword(password))) {
-      return res.status(401).json({ message: 'Invalid credentials' });
-    }
+    if (!user) return res.status(400).json({ message: 'Invalid credentials' });
 
-    const token = generateToken(user);
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch)
+      return res.status(400).json({ message: 'Invalid credentials' });
 
-    res.status(200).json({
+    res.json({
       _id: user._id,
       name: user.name,
       email: user.email,
-      role: user.role,
-      token,
+      token: generateToken(user._id),
     });
   } catch (error) {
-    res.status(500).json({ message: 'Server error during login' });
+    res.status(500).json({ message: 'Server error' });
   }
+};
+
+const generateToken = (id) => {
+  return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 };
