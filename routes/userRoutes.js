@@ -1,12 +1,10 @@
 // routes/userRoutes.js
 import express from 'express';
-import { getUserProfile, updateUserProfile } from '../controllers/userController.js';
+import {getProfile,updateProfile} from '../controllers/userController.js';
 import protect from '../middleware/authMiddleware.js';
-
+import upload from '../middleware/uploadMiddleware.js';
 const router = express.Router();
 
-router.route('/profile')
-  .get(protect, getUserProfile)
-  .put(protect, updateUserProfile);
-
+router.get('/profile', protect, getProfile);
+router.put('/profile', protect,upload.single('photo'), updateProfile);
 export default router;

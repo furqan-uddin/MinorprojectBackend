@@ -3,7 +3,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import connectDB from './config/db.js';
-
+import path from 'path';
 import authRoutes from './routes/authRoutes.js';
 import quizRoutes from './routes/quizRoutes.js';
 import resultRoutes from './routes/resultRoutes.js';
@@ -23,6 +23,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/quizzes', quizRoutes);
 app.use('/api/results', resultRoutes);
 app.use('/api/users', userRoutes);
+app.use('/uploads', express.static(path.join(path.resolve(), '/uploads')));
 app.use(notFound);
 app.use(errorHandler);
 
