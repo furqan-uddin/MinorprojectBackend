@@ -6,8 +6,8 @@ const resultSchema = new mongoose.Schema({
   category: { type: String, required: true },
   score: { type: Number, required: true },
   total: { type: Number, required: true },
-}, {
-  timestamps: true,
+  difficulty: String,
+  timestamp: { type: Date, default: Date.now }
 });
 
 const Result = mongoose.model('Result', resultSchema);

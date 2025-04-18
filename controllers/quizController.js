@@ -12,39 +12,30 @@ export const getAllCategories = async (req, res) => {
 };
 
 // GET /api/quizzes/:category
+// GET /api/quizzes/:categoryId?difficulty=easy
 export const getQuestionsByCategory = async (req, res) => {
+  const { categoryId } = req.params;
+  const { difficulty } = req.query;
+
+  console.log("➡️ Received categoryId:", categoryId);
+  console.log("➡️ Received difficulty:", difficulty);
+
   try {
-    const { categoryId } = req.params;
-    const { difficulty } = req.query;
-
-    console.log("➡️ Received categoryId:", categoryId);
-    console.log("➡️ Received difficulty:", difficulty);
-
     const match = { category: categoryId };
     if (difficulty) match.difficulty = difficulty;
 
-    console.log("🔍 MongoDB match query:", match);
-
     const questions = await Question.aggregate([
       { $match: match },
-      { $sample: { size: 10 } }
+      { $sample: { size: 10 } } // randomly select 10
     ]);
 
     console.log("✅ Questions found:", questions.length);
     res.json(questions);
-
   } catch (error) {
-    console.error("❌ Error fetching questions:", error);
-    res.status(500).json({
-      message: "Failed to load questions",
-      error: error.message || "Unknown server error"
-    });
+    console.error("❌ Error fetching questions:", error.message);
+    res.status(500).json({ message: "Failed to load questions" });
   }
 };
-
-
-
-
 
 export const addQuizCategory = async (req, res) => {
   try {

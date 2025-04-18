@@ -3,7 +3,7 @@ import Result from '../models/Result.js';
 import User from '../models/User.js';
 
 export const submitQuizResult = async (req, res) => {
-  const { category, score, total } = req.body;
+  const { category, score, total, difficulty} = req.body;
 
   try {
     const result = await Result.create({
@@ -11,6 +11,7 @@ export const submitQuizResult = async (req, res) => {
       category,
       score,
       total,
+      difficulty
     });
 
     res.status(201).json(result);
@@ -18,6 +19,11 @@ export const submitQuizResult = async (req, res) => {
     res.status(500).json({ message: 'Failed to submit result' });
   }
 };
+export const getUserResults = async (req, res) => {
+  const results = await Result.find({ user: req.user._id }).sort({ timestamp: -1 });
+  res.json(results);
+};
+
 
 export const getLeaderboard = async (req, res) => {
   try {
