@@ -35,7 +35,7 @@ export const loginUser = async (req, res) => {
   console.log("Login Payload:", req.body);
   try {
     const user = await User.findOne({ email });
-    if (!user) return res.status(400).json({ message: 'Invalid credentials' });
+    if (!user) return res.status(400).json({ message: 'User not found' });
 
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch)
@@ -45,6 +45,7 @@ export const loginUser = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
+      role : user.role,
       token: generateToken(user._id),
     });
   } catch (error) {

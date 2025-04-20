@@ -2,6 +2,16 @@
 import Result from '../models/Result.js';
 import User from '../models/User.js';
 
+
+export const getAllResults = async (req, res) => {
+  try {
+    const results = await Result.find().populate('user', 'name email');
+    res.json(results);
+  } catch (error) {
+    res.status(500).json({ message: 'Failed to fetch results' });
+  }
+};
+
 export const submitQuizResult = async (req, res) => {
   const { category, score, total, difficulty} = req.body;
 
@@ -13,10 +23,9 @@ export const submitQuizResult = async (req, res) => {
       total,
       difficulty
     });
-
     res.status(201).json(result);
   } catch (error) {
-    res.status(500).json({ message: 'Failed to submit result' });
+    res.status(500).json({ message: 'Failed to submit result'});
   }
 };
 export const getUserResults = async (req, res) => {

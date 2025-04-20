@@ -9,9 +9,9 @@ import quizRoutes from './routes/quizRoutes.js';
 import resultRoutes from './routes/resultRoutes.js';
 import userRoutes from './routes/userRoutes.js';
 import { notFound, errorHandler } from './middleware/errorMiddleware.js';
-
+import mongoose from 'mongoose';
 import { seedQuizzesIfNeeded } from './utils/seedData.js';
-
+import adminRoutes from './routes/adminRoutes.js';
 dotenv.config();
 
 const app = express();
@@ -23,10 +23,12 @@ app.use('/api/auth', authRoutes);
 app.use('/api/quizzes', quizRoutes);
 app.use('/api/results', resultRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/admin', adminRoutes);
 app.use('/uploads', express.static(path.join(path.resolve(), '/uploads')));
+
+
 app.use(notFound);
 app.use(errorHandler);
-
 // Default route
 app.get('/', (req, res) => {
   res.send('Quizify backend is running 🚀');

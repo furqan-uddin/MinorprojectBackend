@@ -6,7 +6,7 @@ import {
   addQuizCategory,
   addQuestion,
 } from '../controllers/quizController.js';
-import protect from '../middleware/authMiddleware.js';
+import {protect} from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 

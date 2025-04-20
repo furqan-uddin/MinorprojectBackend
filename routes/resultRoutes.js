@@ -1,7 +1,7 @@
 // routes/resultRoutes.js
 import express from 'express';
 import { submitQuizResult, getLeaderboard,getUserResults } from '../controllers/resultController.js';
-import protect from '../middleware/authMiddleware.js';
+import{ protect }from '../middleware/authMiddleware.js';
 
 const router = express.Router();
 
