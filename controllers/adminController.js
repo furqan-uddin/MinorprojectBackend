@@ -30,11 +30,12 @@ export const updateUserDetails = async (req, res) => {
 
     user.name = name || user.name;
     user.email = email || user.email;
-    user.role = role || user.role;
+    user.role = role?.toLowerCase() || user.role;
 
     const updated = await user.save();
     res.json({ _id: updated._id, name: updated.name, email: updated.email, role: updated.role });
   } catch (error) {
+    console.error("Update User Error:", err);
     res.status(500).json({ message: "Failed to update user" });
   }
 };

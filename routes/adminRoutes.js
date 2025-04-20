@@ -6,6 +6,7 @@ import { getAllQuestions, deleteQuestion, createQuestion, updateQuestion
 import { getAllResults } from '../controllers/resultController.js';
 import {protect} from '../middleware/authMiddleware.js';
 import adminOnly from '../middleware/adminMiddleware.js';
+import { getAdminStats } from '../controllers/adminStatsController.js';
 
 const router = express.Router();
 
@@ -23,4 +24,7 @@ router.put('/questions/:id', protect, adminOnly, updateQuestion);
 // Results
 router.get('/results', protect, adminOnly, getAllResults);
 
+
+//Stats
+router.get('/stats', protect, adminOnly, getAdminStats);
 export default router;
