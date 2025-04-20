@@ -15,11 +15,29 @@ export const deleteUser = async (req, res) => {
     const user = await User.findById(req.params.id);
     if (!user) return res.status(404).json({ message: 'User not found' });
 
-    await user.remove();
+    await user.deleteOne();
     res.json({ message: 'User deleted successfully' });
   } catch (err) {
     res.status(500).json({ message: 'Failed to delete user' });
   }
 };
+
+export const updateUserDetails = async (req, res) => {
+  try {
+    const { name, email, role } = req.body;
+    const user = await User.findById(req.params.id);
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    user.name = name || user.name;
+    user.email = email || user.email;
+    user.role = role || user.role;
+
+    const updated = await user.save();
+    res.json({ _id: updated._id, name: updated.name, email: updated.email, role: updated.role });
+  } catch (error) {
+    res.status(500).json({ message: "Failed to update user" });
+  }
+};
+
 
 
