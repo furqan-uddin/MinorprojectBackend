@@ -63,6 +63,33 @@ export const loginUser = async (req, res) => {
   }
 };
 
+
+// POST /api/auth/reset-password
+export const resetPassword = async (req, res) => {
+  const { email, password } = req.body;
+
+  // Validate password strength
+  const isStrong = password.length >= 6 && /[!@#$%^&*(),.?":{}|<>]/.test(password);
+  if (!isStrong) {
+    return res.status(400).json({ message: "Password must be at least 6 characters and contain a special character" });
+  }
+
+  try {
+    const user = await User.findOne({ email });
+
+    if (!user) return res.status(404).json({ message: "User not found" });
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+    user.password = hashedPassword;
+    await user.save();
+
+    res.json({ message: "Password reset successful" });
+  } catch (err) {
+    console.error("Reset error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
 const generateToken = (id) => {
   return jwt.sign({ id }, process.env.JWT_SECRET, { expiresIn: '7d' });
 };
