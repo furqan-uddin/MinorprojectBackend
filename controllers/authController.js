@@ -6,10 +6,19 @@ import jwt from 'jsonwebtoken';
 export const registerUser = async (req, res) => {
   const { name, email, password } = req.body;
   console.log("Register Payload:", req.body); 
+
   try {
     const userExists = await User.findOne({ email });
     if (userExists)
       return res.status(400).json({ message: 'User already exists' });
+
+    // Password strength check
+    const passwordRegex = /^(?=.*[!@#$%^&*])[A-Za-z\d!@#$%^&*]{6,}$/;
+    if (!passwordRegex.test(password)) {
+      return res.status(400).json({
+        message: "Password must be at least 6 characters long and include at least one special character (!@#$%^&*)"
+      });
+    }
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -26,6 +35,7 @@ export const registerUser = async (req, res) => {
       token: generateToken(newUser._id),
     });
   } catch (error) {
+    console.error("Registration error:", error);
     res.status(500).json({ message: 'Server error' });
   }
 };
@@ -45,7 +55,7 @@ export const loginUser = async (req, res) => {
       _id: user._id,
       name: user.name,
       email: user.email,
-      role : user.role,
+      role: user.role,
       token: generateToken(user._id),
     });
   } catch (error) {
