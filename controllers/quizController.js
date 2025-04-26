@@ -26,7 +26,7 @@ export const getQuestionsByCategory = async (req, res) => {
 
     const questions = await Question.aggregate([
       { $match: match },
-      { $sample: { size: 10 } } // randomly select 10
+      { $sample: { size: 5 } } // randomly select 10
     ]);
 
     console.log("✅ Questions found:", questions.length);
