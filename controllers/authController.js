@@ -81,6 +81,7 @@ export const resetPassword = async (req, res) => {
 
     const hashedPassword = await bcrypt.hash(password, 10);
     user.password = hashedPassword;
+    user.passwordChangedAt=new Date();
     await user.save();
 
     res.json({ message: "Password reset successful" });

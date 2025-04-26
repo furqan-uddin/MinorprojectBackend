@@ -24,6 +24,12 @@ const userSchema = new mongoose.Schema(
     photoURL: {
       type: String,
     },
+    passwordChangedAt:{
+      type : Date,
+    },
+    profileUpdatedAt:{
+      type: Date,
+    }
   },
   {
     timestamps: true,
