@@ -12,7 +12,7 @@ const router = express.Router();
 
 router.get('/', protect, getAllCategories);
 router.get('/:categoryId', protect, getQuestionsByCategory);
-// router.get('/:category', getQuestionsByCategory);
+
 router.post('/', protect, addQuizCategory);
 router.post('/add-question', protect, addQuestion); // New route to add a question
 

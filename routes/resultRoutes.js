@@ -6,7 +6,7 @@ import{ protect }from '../middleware/authMiddleware.js';
 const router = express.Router();
 
 router.post('/', protect, submitQuizResult);
-router.get('/leaderboard', getLeaderboard); // can be public
+router.get('/leaderboard', getLeaderboard);
 router.get('/history', protect, getUserResults);
 
 export default router;

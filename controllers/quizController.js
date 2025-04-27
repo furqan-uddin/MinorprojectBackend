@@ -11,7 +11,6 @@ export const getAllCategories = async (req, res) => {
   }
 };
 
-// GET /api/quizzes/:category
 // GET /api/quizzes/:categoryId?difficulty=easy
 export const getQuestionsByCategory = async (req, res) => {
   const { categoryId } = req.params;
@@ -26,7 +25,7 @@ export const getQuestionsByCategory = async (req, res) => {
 
     const questions = await Question.aggregate([
       { $match: match },
-      { $sample: { size: 5 } } // randomly select 10
+      { $sample: { size: 5 } } // randomly select
     ]);
 
     console.log("✅ Questions found:", questions.length);
@@ -47,7 +46,7 @@ export const addQuizCategory = async (req, res) => {
   }
 };
 
-// Optional: add question
+// add question
 export const addQuestion = async (req, res) => {
   try {
     const newQ = await Question.create(req.body);
